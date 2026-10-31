@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 APP_VERSION = "1.0.0"
 DB_PATH = os.getenv("DATABASE_PATH", "/data/agent.db")
 TOKEN = os.getenv("A2A_BEARER_TOKEN", "CHANGE_ME_BEFORE_DEPLOY")
-BASE_URL = os.getenv("A2A_BASE_URL", "").rstrip("/")
+BASE_URL = os.getenv("A2A_BASE_URL", "https://invoice-a2a-agent-dewd.onrender.com").rstrip("/")
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 API_KEY = os.getenv("OPENAI_API_KEY", "")
 API_BASE = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
