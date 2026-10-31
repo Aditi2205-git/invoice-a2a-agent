@@ -168,7 +168,10 @@ def card():
 
 @app.middleware("http")
 async def no_slash_redirect(request, call_next):
-    return await call_next(request)
+    response = await call_next(request)
+    if request.url.path.startswith("/a2a/"):
+        response.headers["content-type"] = "application/a2a+json"
+    return response
 
 @app.post("/a2a/message:send")
 async def send(request: Request):
