@@ -168,11 +168,9 @@ def card():
 
 @app.middleware("http")
 async def no_slash_redirect(request, call_next):
-    response = await call_next(request)
-    if request.url.path.startswith("/a2a/"):
-        response.headers["content-type"] = "application/a2a+json"
-    return response
+    return await call_next(request)
 
+@app.post("/message:send")
 @app.post("/a2a/message:send")
 async def send(request: Request):
     code=check_headers(request)
@@ -252,6 +250,7 @@ async def send(request: Request):
       conn.commit(); conn.close()
       return JSONResponse({"task":task})
 
+@app.get("/tasks")
 @app.get("/a2a/tasks")
 async def list_tasks(request: Request):
     if request.headers.get("A2A-Version")!="1.0": return error(400,"INVALID_VERSION")
@@ -260,6 +259,7 @@ async def list_tasks(request: Request):
     c=db(); rows=c.execute("SELECT task_json FROM tasks WHERE owner=? ORDER BY created DESC",(owner,)).fetchall(); c.close()
     return {"tasks":[json.loads(r["task_json"]) for r in rows]}
 
+@app.get("/tasks/{task_id}")
 @app.get("/a2a/tasks/{task_id}")
 async def get_task(task_id: str, request: Request):
     if request.headers.get("A2A-Version")!="1.0": return error(400,"INVALID_VERSION")
@@ -269,6 +269,7 @@ async def get_task(task_id: str, request: Request):
     if not row: return error(404,"NOT_FOUND")
     return JSONResponse(json.loads(row["task_json"]))
 
+@app.post("/tasks/{task_id}:cancel")
 @app.post("/a2a/tasks/{task_id}:cancel")
 async def cancel_task(task_id: str, request: Request):
     if request.headers.get("A2A-Version")!="1.0": return error(400,"INVALID_VERSION")
