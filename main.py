@@ -167,8 +167,13 @@ def card():
       "skills":[{"id":"invoice_action_agent","name":"Invoice Action Agent","description":"Reviews invoice packages, proposes controlled business actions and records accepted receipts.","tags":["invoice","accounts-payable","approval","reconciliation"]}]}
 
 @app.middleware("http")
-async def no_slash_redirect(request, call_next):
-    return await call_next(request)
+async def a2a_content_type(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if (path.startswith("/tasks") or path.startswith("/message:send") or
+        path.startswith("/a2a/tasks") or path.startswith("/a2a/message:send")):
+        response.headers["Content-Type"] = "application/a2a+json"
+    return response
 
 @app.post("/message:send")
 @app.post("/a2a/message:send")
